@@ -17,13 +17,10 @@
 
 <script setup>
 import { ref } from 'vue';
-
-
-
-
+import  {$axios } from '@/utils/HttpCommons';
 
 const previewImage = ref('')  // vue ref- 반응형 값을 저장
-
+const base64String = ref('')
 const loading = ref(false)
 
 const changeImage = (event) => {
@@ -37,18 +34,24 @@ const changeImage = (event) => {
     // load 이벤트 핸들러. 리소스 로딩이 완료되면 실행됨.
     reader.onload = (e) => {
       previewImage.value = e.target.result
+      base64String.value = previewImage.value.split(',')[1]
     } // ref previewImage 값 변경
 
     // 컨텐츠를 특정 file에서 읽어옴. 읽는 행위가 종료되면 loadend 이벤트 트리거함 
     // & base64 인코딩된 스트링 데이터가 result 속성에 담김
     reader.readAsDataURL(file)
-
   }
 }
 
 function saveImage() {
-  alert('hi')
-  loading.value = true;
+  let body = {
+    image : base64String.value
+  }
+
+  $axios.post('/upload', body)
+  .then((response) => {
+    console.log(response.data)
+  })
 
 }
 </script>

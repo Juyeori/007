@@ -19,6 +19,7 @@ export const useRoomStore = defineStore('room', () => {
 
   function saveRoom(number) {
     room.value.push(number)
+    
   }
     
     return {room, findRoom, saveRoom}
