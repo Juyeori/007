@@ -13,6 +13,7 @@ import {ref} from 'vue'
 import {useRoomStore} from '@/stores/room';
 import {useRouter} from 'vue-router';
 import {$axios} from '@/utils/HttpCommons';
+import CryptoJS from "crypto-js";
 
 const router = useRouter();
 
@@ -22,6 +23,10 @@ const name = ref('');
 const password = ref('');
 
 function makeRoom() {
+  // const hashedTeamname = CryptoJS.SHA256(name.value).toString();
+  // console.log(hashedTeamname)
+  // const encodedTeamname = btoa(hashedTeamname)
+  // console.log(encodedTeamname)
   let body = {
     teamname : name.value,
     password : password.value,

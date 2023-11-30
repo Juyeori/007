@@ -16,7 +16,7 @@
     <img :src="resultImage" style="max-width: 100%; max-height: 200px;"/>
   </div>
   <br />
-  링크를 공유하세요
+  <button @click="handleCopy">링크 복사</button>
 
 </template>
 
@@ -66,6 +66,17 @@ function saveImage() {
     resultImage.value = `data:image/png;base64,${imageData}`;
   })
 
+}
+
+function handleCopy() {
+  navigator.clipboard.writeText(window.location.href)
+  .then(() => {
+    alert("복사 됨")
+  })
+  .catch(() => {
+    alert("복사 안됨")
+  })
+  
 }
 </script>
 
