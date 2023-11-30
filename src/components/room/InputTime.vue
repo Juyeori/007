@@ -1,27 +1,37 @@
 <template>
 
-    시간표 입력하는 페이지
-    <br />
-    
-    <input type="file" accept="image/*" @change="changeImage" />
-    
-    <div class="preview">
-      <img :src="previewImage" />
-    </div>
-    <br/>
-    <button @click="saveImage">이 시간표로 입력 확정</button>
-    <br />
-    링크를 공유하세요
+  시간표 입력하는 페이지
+  <br />
+  <h3>{{ room }} 회의</h3>
+  이름을 입력하세요<input v-model="username">
+  <br />
+  <input type="file" accept="image/*" @change="changeImage" />
+  <div class="preview">
+    <img :src="previewImage" style="max-width: 100%; max-height: 200px;"/>
+  </div>
+  
+  <br/>
+  <button @click="saveImage">이 시간표로 입력 확정</button>
+  <div class="resultt">
+    <img :src="resultImage" style="max-width: 100%; max-height: 200px;"/>
+  </div>
+  <br />
+  링크를 공유하세요
 
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import  {$axios } from '@/utils/HttpCommons';
+import {useRoomStore} from '@/stores/room';
 
 const previewImage = ref('')  // vue ref- 반응형 값을 저장
 const base64String = ref('')
-const loading = ref(false)
+const username = ref('')
+const resultImage = ref('')
+
+const roomStore = useRoomStore();
+const {room} = roomStore;
 
 const changeImage = (event) => {
   const files = event.target?.files
@@ -45,12 +55,15 @@ const changeImage = (event) => {
 
 function saveImage() {
   let body = {
+    teamname : room,
+    username : username.value,
     image : base64String.value
   }
 
-  $axios.post('/upload', body)
+  $axios.post('/api/image/upload', body)
   .then((response) => {
-    console.log(response.data)
+    const imageData = response.data.image;
+    resultImage.value = `data:image/png;base64,${imageData}`;
   })
 
 }

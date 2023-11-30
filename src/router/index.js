@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import mainView from '../views/MainView.vue'
 import {useRoomStore} from '@/stores/room';
-
+import {$axios} from '@/utils/HttpCommons';
+import {storeToRefs} from 'pinia';
 
 
 
@@ -31,32 +32,33 @@ const router = createRouter({
           beforeEnter : (to, from , next) => {
             const roomNumber = to.params?.roomNumber;
 
-            const rooms = useRoomStore();
-            let sign = rooms.findRoom(roomNumber)
+            const roomStore = useRoomStore()
+            const {room} = storeToRefs(roomStore)
+            let body = {
+              teamname : roomNumber,
+            }
 
-            if (sign === false) {
-                alert('방 없음')
-                next('/')
-            } else {
+            $axios.post('/api/room', body)
+            .then((response) => {
+              if (response.data.msg === "success") {
                 next()
-            }  
+                room.value = roomNumber;
+              } else {
+                alert('방이 없습니다')
+                next(from)
+              }
+            })
+            .catch((err) => {
+
+            })
           }
         },
-        // {
-        //   path: "view/:articleNumber",
-        //   name: "article-view",
-        //   component: () => import("@/components/board/BoardDetail.vue"),
-        // },
-        // {
-        //   path: "write",
-        //   name: "article-write",
-        //   component: () => import("@/components/board/BoardWrite.vue"),
-        // },
-        // {
-        //   path: "modify/:articleNumber",
-        //   name: "article-modify",
-        //   component: () => import("@/components/board/BoardModify.vue"),
-        // },
+        {
+          path: "confirm",
+          name: "InputPassword",
+          component: () => import("@/components/room/InputPassword.vue"),
+          meta: { requiresAuth: true }
+        },
       ],
 
     }
